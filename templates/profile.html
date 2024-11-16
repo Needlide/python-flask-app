@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.username }}'s Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-sm-4 col-12 bg-light vh-100 d-flex flex-column p-3">
+                <div class="list-group mb-3">
+                    <a href="#" class="list-group-item list-group-item-action">Link 1</a>
+                    <a href="#" class="list-group-item list-group-item-action">Link 2</a>
+                    <a href="#" class="list-group-item list-group-item-action">Link 3</a>
+                </div>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPostModal">
+                    Create a New Post
+                </button>
+            </div>
+
+            <div class="col-md-9 col-sm-8 col-12">
+                <div class="text-center mt-5">
+                    <h1>{{ user.username }}'s Profile</h1>
+                    <img src="{{ url_for('static', filename=user.profile_picture) }}" alt="Profile Picture" class="rounded-circle img-fluid" width="150" style="object-fit: cover; height:100px; width:100px;">
+                </div>
+
+                <div class="mt-4">
+                    <h2>Your Posts</h2>
+                    {% if posts %}
+                        <div class="list-group">
+                            {% for post in posts %}
+                                <div class="list-group-item">
+                                    <h4>{{ post.title }}</h4>
+                                    <p>{{ post.text }}</p>
+                                    {% if post.image %}
+                                        <img src="{{ url_for('static', filename=post.image) }}" alt="Post Image" class="img-fluid mb-2" width="300">
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>No posts yet. Start by creating one!</p>
+                    {% endif %}
+                </div>
+
+                <div class="pagination">
+                    {% if pagination.has_prev %}
+                        <a href="{{ url_for('profile', user_id=user_id, page=pagination.prev_num) }}">Previous</a>
+                    {% endif %}
+                    <span>Page {{ pagination.page }} of {{ pagination.pages }}</span>
+                    {% if pagination.has_next %}
+                        <a href="{{ url_for('profile', user_id=user_id, page=pagination.next_num) }}">Next</a>
+                        {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createPostModalLabel">Create a New Post</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" enctype="multipart/form-data" class="form-group">
+                        {{ post_form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label for="title" class="form-label">{{ post_form.title.label }}</label>
+                            {{ post_form.title(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="text" class="form-label">{{ post_form.text.label }}</label>
+                            {{ post_form.text(class="form-control", rows="4") }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="image" class="form-label">{{ post_form.image.label }}</label>
+                            {{ post_form.image(class="form-control") }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">{{ post_form.submit.label }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
